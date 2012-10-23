@@ -16,5 +16,5 @@
   - environments
   - environments/production
   - environments/devel
-- action: copy src=files/master/config.ru dest=/etc/puppet/rack/config.ru
+- action: copy src=files/master/config.ru dest=/etc/puppet/rack/config.ru owner=puppet group=puppet
 

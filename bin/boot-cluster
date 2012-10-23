@@ -1,9 +1,13 @@
 #!/bin/bash
 
+master_external_ip=10.243.28.34
+
 sed -i '
 	/172.16.10/d
 	/10.243.28/d
 	' $HOME/.ssh/known_hosts
+
+mkdir -p $HOME/.dsh/group/cluster
 
 echo "Booting master."
 nova boot --image=fedora-17-x86_64-3 \
@@ -14,7 +18,8 @@ nova boot --image=fedora-17-x86_64-3 \
 	lars-master
 
 echo "Assigning master ip."
-nova add-floating-ip lars-master 10.243.28.34
+nova add-floating-ip lars-master $master_external_ip
+echo $master_external_ip > $HOME/.dsh/group/cluster/master
 
 echo "Booting nodes."
 for x in 0 1 2 3; do
@@ -31,8 +36,20 @@ done
 wait
 
 echo "Waiting for instances."
-./bin/nova-wait-active $server_names
+nova-wait-active $server_names
 
-make clean
-make
+echo "Building hosts file."
+(
+	cat hosts.in
+	./bin/gen-node-ips
+) > hosts
+./bin/gen-node-ips > $HOME/.dsh/group/cluster/minions
+
+echo "Recording master internal ip."
+nova-list-ips | \
+	awk '
+	$1 == "lars-master" && $$4 ~ /^172.16.10/ {
+		printf "master_ip: %s\n", $$4
+	}' > playbooks/vars/master_ip.yml
+
 

@@ -1,0 +1,17 @@
+#!/bin/sh
+
+echo "Building host files."
+(
+	cat hosts.in
+	./bin/gen-node-ips
+) > hosts
+./bin/gen-node-ips > $HOME/.dsh/group/cluster/minions
+
+echo "Recording master internal ip."
+nova-list-ips | \
+	awk '
+	$1 == "lars-master" && $4 ~ /^172.16.10/ {
+		printf "master_ip: %s\n", $4
+	}' > playbooks/vars/master_ip.yml
+
+

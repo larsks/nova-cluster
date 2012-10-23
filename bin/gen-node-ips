@@ -1,4 +1,4 @@
 #!/bin/sh
-$(dirname $0)/nova-list-ips  |
+nova-list-ips  |
 	awk '$1 ~ "lars-node" && $4 ~ /^172\.16/ {print $4}'
 

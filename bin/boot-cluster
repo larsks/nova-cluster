@@ -1,5 +1,10 @@
 #!/bin/sh
 
+sed -i '
+	/172.16.10/d
+	/10.243.28/d
+	' $HOME/.ssh/known_hosts
+
 nova boot --image=fedora-17-x86_64-3 \
 	--flavor=m1.medium \
 	--meta role=master \

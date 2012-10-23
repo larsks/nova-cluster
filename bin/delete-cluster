@@ -1,7 +1,8 @@
 #!/bin/sh
 
 nova delete lars-master
-for x in 0 1 2 3; do
-	nova delete lars-node-$x
+nova list | awk '/lars-node-/ {print $4}' | while read name; do
+	echo "Deleting $name."
+	nova delete $name
 done
 

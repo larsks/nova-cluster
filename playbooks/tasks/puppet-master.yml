@@ -4,9 +4,6 @@
   - mod_passenger
 - action: template src=$puppet_conf dest=/etc/puppet/puppet.conf
   notify: restart puppet
-- action: shell /sbin/service puppetmaster stop
-  ignore_errors: true
-- action: service name=puppetmaster state=stopped enabled=false
 - action: file path=/etc/puppet/$item state=directory owner=puppet group=puppet
   with_items:
   - rack
@@ -23,6 +20,9 @@
   with_items:
   - production
   - devel
+- action: shell /sbin/service puppetmaster start
+  ignore_errors: true
+- action: shell /sbin/service puppetmaster stop
 - action: copy src=files/master/puppetmaster.conf dest=/etc/httpd/conf.d/puppetmaster.conf
   notify: restart apache
 

@@ -1,0 +1,9 @@
+- name: restart puppet
+  action: service name=puppet state=restarted
+- name: restart puppet master
+  action: service name=puppetmaster state=restarted
+- name: restart iptables
+  action: service name=iptables state=restarted
+- name: restart apache
+  action: service name=httpd state=restarted
+

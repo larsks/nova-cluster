@@ -1,0 +1,8 @@
+- action: yum name=$item state=installed
+  with_items:
+  - facter
+  - puppet
+- action: template src=$puppet_conf dest=/etc/puppet/puppet.conf
+  notify: restart puppet
+- action: service name=puppet state=running enabled=true
+

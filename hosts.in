@@ -1,0 +1,10 @@
+[master]
+10.243.28.34
+
+[master:vars]
+puppet_conf=files/master/puppet.conf
+
+[minions:vars]
+puppet_conf=files/minions/puppet.conf
+
+[minions]

@@ -1,0 +1,18 @@
+- action: yum name=$item state=installed
+  with_items:
+  - puppet-server
+  - mod_passenger
+- action: template src=$puppet_conf dest=/etc/puppet/puppet.conf
+  notify: restart puppet
+- action: service name=puppetmaster state=stopped enabled=false
+- action: copy src=files/master/puppetmaster.conf dest=/etc/httpd/conf.d/puppetmaster.conf
+  notify: restart apache
+- action: file path=/etc/puppet/$item state=directory
+  with_items:
+  - rack
+  - rack/public
+  - environments
+  - environments/production
+  - environments/devel
+- action: copy src=files/master/config.ru dest=/etc/puppet/rack/config.ru
+

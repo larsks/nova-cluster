@@ -7,10 +7,12 @@
 - action: service name=puppetmaster state=stopped enabled=false
 - action: copy src=files/master/puppetmaster.conf dest=/etc/httpd/conf.d/puppetmaster.conf
   notify: restart apache
-- action: file path=/etc/puppet/$item state=directory
+- action: file path=/etc/puppet/$item state=directory owner=puppet group=puppet
   with_items:
   - rack
   - rack/public
+- action: file path=/etc/puppet/$item state=directory
+  with_items:
   - environments
   - environments/production
   - environments/devel

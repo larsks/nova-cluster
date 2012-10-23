@@ -2,12 +2,16 @@
   user: cloud
   sudo: true
   vars_files:
-  - vars/default.yml
+  - vars/master_ip.yml
   tasks:
   - action: selinux state=permissive policy=targeted
   - action: selinux state=disabled policy=targeted
   - include: tasks/puppet-client.yml
+
+  # One-off actions that aren't part of a larger
+  # task list.
   - action: shell puppet resource host puppet ip=$master_ip
+  - action: copy src=files/user-data-enc dest=/usr/bin/user-data-enc mode=0755
   handlers:
   - include: handlers/services.yml
 
@@ -22,8 +26,6 @@
 - hosts: master
   user: cloud
   sudo: true
-  tags:
-  - postweb
   tasks:
   - include: tasks/puppet-master.yml
   - action: copy src=files/master/iptables dest=/etc/sysconfig/iptables

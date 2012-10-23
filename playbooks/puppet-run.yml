@@ -1,0 +1,6 @@
+- hosts: all
+  user: cloud
+  sudo: true
+  tasks:
+  - action: shell puppet agent -ov --no-daemonize
+

@@ -4,6 +4,7 @@
   vars_files:
   - vars/default.yml
   tasks:
+  - action: selinux state=permissive policy=targeted
   - action: selinux state=disabled policy=targeted
   - include: tasks/puppet-client.yml
   - action: shell puppet resource host puppet ip=$master_ip

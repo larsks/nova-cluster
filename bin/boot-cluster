@@ -7,14 +7,14 @@ sed -i '
 
 nova boot --image=fedora-17-x86_64-3 \
 	--flavor=m1.medium \
-	--meta role=master \
+	--user_data playbooks/files/master/userdata \
 	--key_name lars_madhatter \
 	lars-master
 
 for x in 0 1 2 3; do
 	nova boot --image=fedora-17-x86_64-minimal \
 		--flavor=m1.small \
-		--meta role=minion \
+		--user_data playbooks/files/minions/userdata \
 		--key_name lars_madhatter \
 		lars-node-$x
 done

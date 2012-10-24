@@ -3,6 +3,6 @@
 nova delete lars-master
 nova list | awk '/lars-node-/ {print $4}' | while read name; do
 	echo "Deleting $name."
-	nova delete $name
+	nova delete $name &
 done
 

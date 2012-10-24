@@ -1,0 +1,27 @@
+#!/usr/bin/python
+
+import os
+import sys
+import errno
+import subprocess
+
+pid, master_fd = os.forkpty()
+
+if pid == 0:
+    # child process: now that we're attached to a
+    # pty, run the given command.
+    os.execvp(sys.argv[1], sys.argv[1:])
+else:
+    while True:
+        try:
+            data = os.read(master_fd, 1)
+        except OSError, detail:
+            if detail.errno == errno.EIO:
+                break
+
+        if not data:
+            break
+
+        sys.stdout.write(data)
+
+    os.wait()

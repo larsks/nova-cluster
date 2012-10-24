@@ -1,0 +1,15 @@
+#!/bin/sh
+
+pdsh -g cluster/minions -g cluster/master -l cloud echo | cut -f1 -d: |
+while read dst; do
+	echo === $dst ===
+	(
+	scp bin/pty cloud@$dst:/tmp/pty
+	scp files/bootstrap.sh cloud@$dst:/tmp/bootstrap.sh
+	ssh cloud@$dst sh /tmp/bootstrap.sh
+	) < /dev/null
+done
+
+pdcp -g cluster/minions -g cluster/master -l cloud -r puppet /home/cloud/
+pdsh -g cluster/minions -g cluster/master -l cloud sudo puppet apply --modulepath=puppet/modules puppet/site.pp
+

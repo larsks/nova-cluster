@@ -13,7 +13,7 @@ mkdir -p $HOME/.dsh/group/cluster
 echo "Booting master."
 nova boot --image=fedora-17-x86_64-3 \
 	--flavor=m1.medium \
-	--user_data playbooks/files/master/userdata \
+	--user_data files/master/userdata \
 	--key_name lars_madhatter \
 	--poll \
 	lars-master
@@ -22,12 +22,17 @@ echo "Assigning master ip."
 nova add-floating-ip lars-master $master_external_ip
 echo $master_external_ip > $HOME/.dsh/group/cluster/master
 
+echo "Generating user-data."
+master_internal_ip=$(nova-list-ips | \
+	awk ' $1 == "lars-master" && $4 ~ /^172.16.10/ {print $4}')
+sed -i '/salt_master_ip:/ s/:.*/: '"$master_internal_ip"'/' files/minions/userdata
+
 echo "Booting nodes."
 for (( x=0; x<$nodes; x++ )); do
 	echo "  Booting node $x."
 	nova boot --image=fedora-17-x86_64-minimal \
 		--flavor=m1.small \
-		--user_data playbooks/files/minions/userdata \
+		--user_data files/minions/userdata \
 		--key_name lars_madhatter \
 		lars-node-$x > /dev/null 2>&1 &
 	server_names="$server_names lars-node-$x"
